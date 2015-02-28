@@ -23,4 +23,16 @@ class Tools
     {
         return $protect . str_replace($protect, "\\$protect", $str) . $protect;
     }
+
+    public static function implodeWithKeys($array, $keyValueSeparator = ' = ', $elementsSeparator = ' AND ', $protects = array('`', '"'))
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+        $elements = array();
+        foreach ($array as $key => $value) {
+            $elements[] = static::implode(array(static::protect($key, $protects[0]), static::protect($value, $protects[1])), $keyValueSeparator);
+        }
+        return static::implode($elements, $elementsSeparator);
+    }
 }

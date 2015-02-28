@@ -19,7 +19,7 @@ abstract class Model
      *
      * @param $properties
      *
-     * @return array|mixed
+     * @return Model
      */
     public static function find($properties)
     {
@@ -100,6 +100,11 @@ abstract class Model
             $this->update();
         }
         $this->after_save();
+    }
+
+    public function delete()
+    {
+        return DB::query(static::buildQuery('delete', array('limit' => '1', 'where' => Tools::implodeWithKeys($this->getFields()))));
     }
 
     private function insert()
