@@ -110,7 +110,6 @@ abstract class Model
     private function insert()
     {
         $query = static::buildQuery('insert', array('values' => $this->getFields()));
-        echo $query;
         DB::query($query);
     }
 
