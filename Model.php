@@ -24,7 +24,7 @@ abstract class Model
     public static function find($properties)
     {
         if (!is_array($properties)) {
-            $properties = array('where' => static::$_id . ' = ' . $properties);
+            $properties = array('where' => array(static::$_id => $properties));
         }
         if (empty($properties['fields'])) {
             $properties['fields'] = '*';
@@ -70,9 +70,9 @@ abstract class Model
         if (!empty(static::$_unique)) {
             $where = array();
             foreach (static::$_unique as $unique) {
-                $where[] = Tools::implode($this->propToDb($unique), '', '`') . ' = ' . Tools::implode($this->$unique, '', '"');
+                $where[$this->propToDb($unique)] = $this->$unique;
             }
-            $matches = static::find(array('where' => Tools::implode($where, ' OR ')));
+            $matches = static::find(array('or_where' => $where));
 
             if (!empty($matches)) {
                 throw new Unique(current($matches));
@@ -104,7 +104,7 @@ abstract class Model
 
     public function delete()
     {
-        return DB::query(static::buildQuery('delete', array('limit' => '1', 'where' => Tools::implodeWithKeys($this->getFields()))));
+        return DB::query(static::buildQuery('delete', array('limit' => '1', 'or_where' => $this->getFields())));
     }
 
     private function insert()
@@ -138,8 +138,10 @@ abstract class Model
         if (!empty($properties['values'])) {
             $query .= " (" . Tools::implode(array_keys($properties['values']), ',', '`') . ") VALUES (" . Tools::implode($properties['values'], ',', '"') . ")";
         }
-        if (!empty($properties['where'])) {
-            $query .= " WHERE " . $properties['where'];
+        if (!empty($properties['and_where'])) {
+            $query .= " WHERE " . Tools::implodeWithKeys($properties['and_where'], $keyValueSeparator = ' = ', $elementsSeparator = ' AND ');
+        } else if (!empty($properties['or_where'])) {
+            $query .= " WHERE " . Tools::implodeWithKeys($properties['or_where'], $keyValueSeparator = ' = ', $elementsSeparator = ' OR ');
         }
         if (!empty($properties['limit'])) {
             $query .= " LIMIT " . $properties['limit'];
@@ -150,11 +152,12 @@ abstract class Model
     private static function defaultProperties()
     {
         return array(
-            'fields' => '',
-            'where'  => '',
-            'order'  => array(),
-            'limit'  => '',
-            'value'  => ''
+            'fields'    => '',
+            'and_where' => '',
+            'or_where'  => '',
+            'order'     => array(),
+            'limit'     => '',
+            'value'     => ''
         );
     }
 }
