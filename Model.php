@@ -142,6 +142,8 @@ abstract class Model
             $query .= " WHERE " . Tools::implodeWithKeys($properties['and_where'], $keyValueSeparator = ' = ', $elementsSeparator = ' AND ');
         } else if (!empty($properties['or_where'])) {
             $query .= " WHERE " . Tools::implodeWithKeys($properties['or_where'], $keyValueSeparator = ' = ', $elementsSeparator = ' OR ');
+        } else if (!empty($properties['where'])) {
+            $query .= " WHERE " . $properties['where'];
         }
         if (!empty($properties['limit'])) {
             $query .= " LIMIT " . $properties['limit'];
@@ -153,6 +155,7 @@ abstract class Model
     {
         return array(
             'fields'    => '',
+            'where'     => '',
             'and_where' => '',
             'or_where'  => '',
             'order'     => array(),
