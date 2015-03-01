@@ -27,7 +27,7 @@ abstract class Model
      *
      * @return Model
      */
-    public static function find($properties)
+    public static function find($properties, $forceArray = false)
     {
         if (!is_array($properties)) {
             $properties = array('and_where' => array(static::_id() => $properties));
@@ -42,7 +42,7 @@ abstract class Model
         while (($row = $result->fetch(\PDO::FETCH_ASSOC))) {
             $results[] = new static($row);
         }
-        if ($result->rowCount() == 1) {
+        if (!$forceArray && $result->rowCount() == 1) {
             return current($results);
         }
         return $results;
