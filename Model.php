@@ -30,7 +30,7 @@ abstract class Model
     public static function find($properties)
     {
         if (!is_array($properties)) {
-            $properties = array('where' => array(static::_id() => $properties));
+            $properties = array('and_where' => array(static::_id() => $properties));
         }
         if (empty($properties['fields'])) {
             $properties['fields'] = '*';
@@ -122,7 +122,7 @@ abstract class Model
         if (!empty(static::$_unique)) {
             $where = array();
             foreach (static::$_unique as $unique) {
-                $where[$this->propToDb($unique)] = $this->$unique;
+                $where[$unique] = $this->$unique;
             }
             $matches = static::find(array('or_where' => $where));
 
