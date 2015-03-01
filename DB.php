@@ -50,6 +50,7 @@ class DB
 
     public static function query($sql)
     {
+        echo $sql . "<br>";
         return static::i()->_query($sql);
     }
 

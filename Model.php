@@ -3,7 +3,7 @@
 namespace Orm;
 
 use Orm\Model\Exception\Unique;
-use Fuel\Core\Arr;
+
 
 abstract class Model
 {
@@ -128,7 +128,7 @@ abstract class Model
 
     private static function buildQuery($type, $properties)
     {
-        $properties = Arr::merge(static::defaultProperties(), $properties);
+        $properties = array_merge(static::defaultProperties(), $properties);
         $type       = strtoupper($type);
         $from       = 'FROM';
         if ($type == 'INSERT') {
