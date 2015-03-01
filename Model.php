@@ -110,10 +110,20 @@ abstract class Model
     public function __construct($data = null)
     {
         if (!empty($data)) {
-            foreach ($data as $key => $value) {
-                $prop        = static::dbToProp($key);
-                $this->$prop = $value;
-            }
+            $this->import($data);
+        }
+    }
+
+    /**
+     * Import an array of databases rows into model properties
+     *
+     * @param $data
+     */
+    public function import($data)
+    {
+        foreach ($data as $key => $value) {
+            $prop        = $this->dbToProp($key);
+            $this->$prop = $value;
         }
     }
 
