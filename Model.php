@@ -17,7 +17,7 @@ abstract class Model
 
     private static function _id()
     {
-        return static::propToDb(static::$_id);
+        return static::$_id;
     }
 
     /**
@@ -157,7 +157,7 @@ abstract class Model
         $this->before_save();
         $idField = static::_id();
         if (empty($this->$idField)) {
-            $this->idField = $this->insert();
+            $this->$idField = $this->insert();
         } else {
             $this->update();
         }
