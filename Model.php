@@ -191,7 +191,7 @@ abstract class Model
         $properties = get_object_vars($this);
         $dbFields   = array();
         foreach ($properties as $key => $value) {
-            if ($key[0] == '_' || empty($value)) {
+            if ($key[0] == '_') {
                 continue;
             }
             $dbFields[$key] = $value;
