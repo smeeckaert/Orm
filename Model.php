@@ -7,13 +7,18 @@ use Orm\Model\Exception\Unique;
 
 abstract class Model
 {
-    static protected $_id;
+    static protected $_id = 'id';
     static protected $_table;
     static protected $_prefix;
     static protected $_unique;
     protected static $_relations = array();
     private $_prefixLen;
     private $_relationships = array();
+
+    private static function _id()
+    {
+        return static::propToDb(static::$_id);
+    }
 
     /**
      * Find a matching set of elements
@@ -25,7 +30,7 @@ abstract class Model
     public static function find($properties)
     {
         if (!is_array($properties)) {
-            $properties = array('where' => array(static::$_id => $properties));
+            $properties = array('where' => array(static::_id() => $properties));
         }
         if (empty($properties['fields'])) {
             $properties['fields'] = '*';
@@ -89,7 +94,7 @@ abstract class Model
         return null;
     }
 
-    protected function dbToProp($field)
+    private function dbToProp($field)
     {
         if (empty($this->_prefixLen)) {
             $this->_prefixLen = strlen(static::$_prefix) + 1;
@@ -140,7 +145,7 @@ abstract class Model
     public function save()
     {
         $this->before_save();
-        $idField = static::$_id;
+        $idField = static::_id();
         if (empty($this->$idField)) {
             $this->idField = $this->insert();
         } else {
@@ -160,7 +165,7 @@ abstract class Model
         DB::query($query);
     }
 
-    protected function getFields()
+    private function getFields()
     {
         $properties = get_object_vars($this);
         $dbFields   = array();
@@ -214,6 +219,9 @@ abstract class Model
             $query .= " WHERE " . Tools::implodeWithKeys(static::keysToDb($properties['or_where']), $keyValueSeparator = ' = ', $elementsSeparator = ' OR ');
         } else if (!empty($properties['where'])) {
             $query .= " WHERE " . $properties['where'];
+        }
+        if (!empty($properties['order'])) {
+            $query .= " ORDER BY " . Tools::implodeWithKeys(static::keysToDb($properties['order']), $keyValueSeparator = ' ', $elementsSeparator = ', ', array('`', ''));
         }
         if (!empty($properties['limit'])) {
             $query .= " LIMIT " . $properties['limit'];

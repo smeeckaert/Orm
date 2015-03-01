@@ -38,8 +38,7 @@ $password = 'YOUR_PASSWORD';
 
 ## Documentation
 
-
-#### Using
+[See the wiki](https://github.com/smeeckaert/orm/wiki)
 
 ## License
 
