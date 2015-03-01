@@ -164,9 +164,20 @@ abstract class Model
         $this->after_save();
     }
 
+    private function id()
+    {
+        $idField = static::_id();
+        return $this->$idField;
+    }
+
+    public function update()
+    {
+        return DB::query(static::buildQuery('update', array('set' => $this->getFields(), 'limit' => '1', 'and_where' => array(static::_id() => $this->id()))));
+    }
+
     public function delete()
     {
-        return DB::query(static::buildQuery('delete', array('limit' => '1', 'or_where' => $this->getFields())));
+        return DB::query(static::buildQuery('delete', array('limit' => '1', 'and_where' => $this->getFields())));
     }
 
     private function insert()
@@ -183,7 +194,7 @@ abstract class Model
             if ($key[0] == '_' || empty($value)) {
                 continue;
             }
-            $dbFields[$this->propToDb($key)] = $value;
+            $dbFields[$key] = $value;
         }
         return $dbFields;
     }
@@ -218,10 +229,15 @@ abstract class Model
         $from       = 'FROM';
         if ($type == 'INSERT') {
             $from = 'INTO';
+        } else if ($type == 'UPDATE') {
+            $from = '';
         }
         $query = "$type " . Tools::implode($properties['fields']) . " $from `" . static::$_table . '`';
         if (!empty($properties['values'])) {
             $query .= " (" . Tools::implode(array_keys($properties['values']), ',', '`') . ") VALUES (" . Tools::implode($properties['values'], ',', '"') . ")";
+        }
+        if (!empty($properties['set'])) {
+            $query .= " SET " . Tools::implodeWithKeys(static::keysToDb($properties['set']), $keyValueSeparator = ' = ', $elementsSeparator = ',');
         }
         if (!empty($properties['and_where'])) {
             $query .= " WHERE " . Tools::implodeWithKeys(static::keysToDb($properties['and_where']), $keyValueSeparator = ' = ', $elementsSeparator = ' AND ');
