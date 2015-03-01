@@ -38,6 +38,22 @@ class Tools
         return $a1;
     }
 
+    public static function deepMerge($a1, $a2)
+    {
+        foreach ($a1 as $key => $value) {
+            if (isset($a2[$key])) {
+                if (is_array($value)) {
+                    $value = static::deepMerge($value, $a2[$key]);
+                }
+                $a2[$key] = $value;
+            }
+        }
+        foreach ($a2 as $key => $value) {
+            $a1[$key] = $value;
+        }
+        return $a1;
+    }
+
     public static function implodeWithKeys($array, $keyValueSeparator = ' = ', $elementsSeparator = ' AND ', $protects = array('`', '"'))
     {
         if (!is_array($array)) {

@@ -11,8 +11,9 @@ abstract class Model
     static protected $_table;
     static protected $_prefix;
     static protected $_unique;
-
+    protected static $_relations = array();
     private $_prefixLen;
+    private $_relationships = array();
 
     /**
      * Find a matching set of elements
@@ -42,6 +43,31 @@ abstract class Model
         return $results;
     }
 
+    public function __get($name)
+    {
+        if (array_key_exists($name, static::$_relations)) {
+            if (!isset($this->_relationships[$name])) {
+                $rel      = static::$_relations[$name];
+                $fromProp = $rel['from'];
+                /** @var Model $model */
+                $model  = $rel['model'];
+                $params = array('and_where' => array($rel['to'] => $this->$fromProp));
+                if (!empty($rel['conditions'])) {
+                    $params = Tools::deepMerge($params, $rel['conditions']);
+                }
+                $this->_relationships[$name] = $model::find($params);
+            }
+            return $this->_relationships[$name];
+        }
+        $trace = debug_backtrace();
+        trigger_error(
+            'Undefined property via __get(): ' . $name .
+            ' in ' . $trace[0]['file'] .
+            ' on line ' . $trace[0]['line'],
+            E_USER_NOTICE);
+        return null;
+    }
+
     protected function dbToProp($field)
     {
         if (empty($this->_prefixLen)) {
@@ -50,7 +76,7 @@ abstract class Model
         return substr($field, $this->_prefixLen);
     }
 
-    protected static function propToDb($field)
+    public static function propToDb($field)
     {
         return static::$_prefix . '_' . $field;
     }
@@ -147,6 +173,7 @@ abstract class Model
         }
         return $db;
     }
+
 
     private static function buildQuery($type, $properties, $item = '')
     {
