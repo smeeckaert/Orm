@@ -50,7 +50,7 @@ abstract class Model
         return substr($field, $this->_prefixLen);
     }
 
-    protected function propToDb($field)
+    protected static function propToDb($field)
     {
         return static::$_prefix . '_' . $field;
     }
@@ -126,7 +126,29 @@ abstract class Model
         return $dbFields;
     }
 
-    private static function buildQuery($type, $properties)
+    /**
+     * @param       $array
+     * @param Model $item
+     *
+     * @return array
+     */
+    private static function keysToDb($array)
+    {
+        if (!is_array($array)) {
+            return $array;
+        }
+        $db = array();
+        foreach ($array as $key => $value) {
+            if (is_string($key)) {
+                $db[static::propToDb($key)] = static::keysToDb($value);
+            } else {
+                $db[$key] = static::keysToDb($value);
+            }
+        }
+        return $db;
+    }
+
+    private static function buildQuery($type, $properties, $item = '')
     {
         $properties = array_merge(static::defaultProperties(), $properties);
         $type       = strtoupper($type);
@@ -139,15 +161,16 @@ abstract class Model
             $query .= " (" . Tools::implode(array_keys($properties['values']), ',', '`') . ") VALUES (" . Tools::implode($properties['values'], ',', '"') . ")";
         }
         if (!empty($properties['and_where'])) {
-            $query .= " WHERE " . Tools::implodeWithKeys($properties['and_where'], $keyValueSeparator = ' = ', $elementsSeparator = ' AND ');
+            $query .= " WHERE " . Tools::implodeWithKeys(static::keysToDb($properties['and_where']), $keyValueSeparator = ' = ', $elementsSeparator = ' AND ');
         } else if (!empty($properties['or_where'])) {
-            $query .= " WHERE " . Tools::implodeWithKeys($properties['or_where'], $keyValueSeparator = ' = ', $elementsSeparator = ' OR ');
+            $query .= " WHERE " . Tools::implodeWithKeys(static::keysToDb($properties['or_where']), $keyValueSeparator = ' = ', $elementsSeparator = ' OR ');
         } else if (!empty($properties['where'])) {
             $query .= " WHERE " . $properties['where'];
         }
         if (!empty($properties['limit'])) {
             $query .= " LIMIT " . $properties['limit'];
         }
+        echo $query, '<br>';
         return $query;
     }
 
