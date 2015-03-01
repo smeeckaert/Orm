@@ -197,8 +197,7 @@ abstract class Model
         if (!empty($properties['limit'])) {
             $query .= " LIMIT " . $properties['limit'];
         }
-        echo $query, '<br>';
-        return $query;
+            return $query;
     }
 
     private static function defaultProperties()
