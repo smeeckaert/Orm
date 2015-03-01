@@ -68,6 +68,27 @@ abstract class Model
         return null;
     }
 
+    /**
+     * @param $relation
+     *
+     * @return Model
+     */
+    public function rel($relation)
+    {
+        if (array_key_exists($relation, static::$_relations)) {
+            $rel      = static::$_relations[$relation];
+            $fromProp = $rel['from'];
+            $toProp   = $rel['to'];
+
+            /** @var Model $model */
+            $model         = $rel['model'];
+            $item          = new $model();
+            $item->$toProp = $this->$fromProp;
+            return $item;
+        }
+        return null;
+    }
+
     protected function dbToProp($field)
     {
         if (empty($this->_prefixLen)) {
@@ -197,7 +218,7 @@ abstract class Model
         if (!empty($properties['limit'])) {
             $query .= " LIMIT " . $properties['limit'];
         }
-            return $query;
+        return $query;
     }
 
     private static function defaultProperties()
