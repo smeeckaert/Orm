@@ -234,7 +234,7 @@ abstract class Model
         }
         $query = "$type " . Tools::implode($properties['fields']) . " $from `" . static::$_table . '`';
         if (!empty($properties['values'])) {
-            $query .= " (" . Tools::implode(array_keys($properties['values']), ',', '`') . ") VALUES (" . Tools::implode($properties['values'], ',', '"') . ")";
+            $query .= " (" . Tools::implode(array_keys(static::keysToDb($properties['values'])), ',', '`') . ") VALUES (" . Tools::implode($properties['values'], ',', '"') . ")";
         }
         if (!empty($properties['set'])) {
             $query .= " SET " . Tools::implodeWithKeys(static::keysToDb($properties['set']), $keyValueSeparator = ' = ', $elementsSeparator = ',');
