@@ -25,3 +25,7 @@ If you want to use these features, there is plenty other ORM available that do i
 ## Installation
 
 ## Documentation
+
+## License
+
+Everything here is public domain.
