@@ -2,8 +2,6 @@
 
 This is a lightweight standalone ORM in PHP. It was primarly made to use for simple REST APIs.
 
-``It's still a WIP so don't trust everything you see until this message goes away``
-
 ## What it does
 
 * Uses PDO as interface
