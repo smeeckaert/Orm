@@ -9,6 +9,7 @@ class DB
      */
     private $dbh;
     static private $_instance;
+    private $dbInfos;
 
     /**
      * @return DB
@@ -45,7 +46,14 @@ class DB
 
     public function __construct($dsn, $user, $password, $options)
     {
-        $this->dbh = new \PDO($dsn, $user, $password, $options);
+        $this->dbInfos = array('dsn' => $dsn, 'user' => $user, 'password' => $password, 'options' => $options);
+    }
+
+    public function initDbh()
+    {
+        if (empty($this->dbh)) {
+            $this->dbh = new \PDO($this->dbInfos['dsn'], $this->dbInfos['user'], $this->dbInfos['password'], $this->dbInfos['options']);
+        }
     }
 
     public static function query($sql)
@@ -55,6 +63,7 @@ class DB
 
     public function _query($sql)
     {
+        $this->initDbh();
         $query = $this->dbh->query($sql);
         if (!$query) {
             throw new \Exception(Tools::implode($this->dbh->errorInfo(), ' :: '));
