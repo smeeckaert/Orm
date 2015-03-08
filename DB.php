@@ -61,6 +61,17 @@ class DB
         return static::i()->_query($sql);
     }
 
+    public static function lastId()
+    {
+        return static::i()->_lastInsertId();
+    }
+
+    public function _lastInsertId()
+    {
+        $this->initDbh();
+        return $this->dbh->lastInsertId();
+    }
+
     public function _query($sql)
     {
         $this->initDbh();

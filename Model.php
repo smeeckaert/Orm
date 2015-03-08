@@ -164,7 +164,7 @@ abstract class Model
         $this->after_save();
     }
 
-    private function id()
+    protected function id()
     {
         $idField = static::_id();
         return $this->$idField;
@@ -184,6 +184,7 @@ abstract class Model
     {
         $query = static::buildQuery('insert', array('values' => $this->getFields()));
         DB::query($query);
+        return DB::lastId();
     }
 
     private function getFields()
