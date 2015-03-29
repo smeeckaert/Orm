@@ -1,8 +1,8 @@
 <?php
 
-namespace Orm\Trait;
+namespace FW\Orm\Traits;
 
-class Url
+trait Url
 {
-
+    public $url;
 }

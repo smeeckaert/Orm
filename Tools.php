@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Orm;
+namespace FW\Orm;
 
 class Tools
 {

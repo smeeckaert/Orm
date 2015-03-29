@@ -1,8 +1,8 @@
 <?php
 
-namespace Orm;
+namespace FW\Orm;
 
-use Orm\Model\Exception\Unique;
+use FW\Orm\Model\Exception\Unique;
 
 
 abstract class Model

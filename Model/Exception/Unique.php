@@ -1,8 +1,8 @@
 <?php
 
-namespace Orm\Model\Exception;
+namespace FW\Orm\Model\Exception;
 
-use Orm\Model;
+use FW\Orm\Model;
 
 /**
  * Class Unique
