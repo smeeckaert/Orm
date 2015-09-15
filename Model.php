@@ -39,8 +39,9 @@ abstract class Model
         $query   = static::buildQuery('select', $properties);
         $result  = DB::query($query);
         $results = array();
+        $idField = static::propToDb(static::_id());
         while (($row = $result->fetch(\PDO::FETCH_ASSOC))) {
-            $results[] = new static($row);
+            $results[$row[$idField]] = new static($row);
         }
         if (!$forceArray && $result->rowCount() == 1) {
             return current($results);
@@ -60,7 +61,7 @@ abstract class Model
                 if (!empty($rel['conditions'])) {
                     $params = Tools::deepMerge($params, $rel['conditions']);
                 }
-                $this->_relationships[$name] = $model::find($params);
+                $this->_relationships[$name] = $model::find($params, true);
             }
             return $this->_relationships[$name];
         }
@@ -253,6 +254,7 @@ abstract class Model
         if (!empty($properties['limit'])) {
             $query .= " LIMIT " . $properties['limit'];
         }
+        $query = str_replace('= ""', '= NULL', $query);
         return $query;
     }
 
