@@ -1,0 +1,19 @@
+{
+  "name": "smeeckaert/fw-orm",
+  "description": "ORM for FW",
+  "license": "Unlicense",
+  "authors": [
+    {
+      "name": "Martin Smeeckaert",
+      "email": "martin@smeeckaert.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "FW\\Orm\\": ""
+    }
+  },
+  "require": {
+    "smeeckaert/fw-tools": "~1.0"
+  }
+}
